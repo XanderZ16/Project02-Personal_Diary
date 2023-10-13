@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta property="og:title" content="Xander's Dictionary">
+    <meta property="og:description" content="The best website to see many word with the definition">
+    <meta property="og:image" content="{{ url_for('static', filename='logo_red.png') }}">
+
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+
+    <title>Personal Diary</title>
+    <!-- Bootstrap CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <!-- Link To External CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <!-- JQuery CDN -->
+    <script src="https://code.jquery.com/jquery-3.7.1.js"
+        integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+
+    <script>
+        let data = {{ data | tojson }};
+        words = [];
+        for (let i = 0; i < data.length; i++) {
+            words.push(data[i].word);
+        }
+
+        function find_word() {
+            let word = $('#input-word').val().toLowerCase().trim();
+            if (!word) {
+                alert('Please Enter Some Word');
+                return;
+            }
+            if (words.includes(word)) {
+                let row = $(`#word-${word}`);
+                row.addClass('highlight');
+                row.siblings().removeClass('highlight');
+                row[0].scrollIntoView();
+            } else[
+                window.location.href = `/detail/${word}?status=new`
+            ]
+        }
+    </script>
+</head>
+
+<body>
+    <div class="wrap">
+        <div class="banner"></div>
+
+        {% if word %}
+        <div class="error-box">
+            <h1>Your Word, <span>{{ word }}</span>, Could Not Be Found</h1>
+            {% if suggestions %}
+            <h3>Here Are Some Suggested Word</h3>
+            {% for suggestion in suggestions %}
+            <div class="suggestion">
+                <a href="/detail/{{ suggestion }}?status=new">{{ suggestion }}</a>
+            </div>
+            {% endfor %}
+            {% endif %}
+        </div>
+        {% else %}
+
+        <!-- Search Box -->
+        <div class="search-box d-flex justify-content-center">
+            <input id="input-word" type="text" class="form-control" placeholder="Search Word">
+            <button class="btn btn-light" onclick="find_word()">
+                <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512">
+                    <path
+                        d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z" />
+                </svg>
+            </button>
+        </div>
+
+        <!-- Table Of Data -->
+        <table class="table">
+            <thead class="thead-light">
+                <tr>
+                    <th scope="col" width="30%">WORD</th>
+                    <th scope="col">DEFINITION</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for word in data %}
+                {% set definition = word.definition %}
+                {% set word = word.word %}
+                <tr id="word-{{ word }}">
+                    <td><a href="/detail/{{ word }}?status=saved">{{ word }}</a></td>
+                    <td>{{ definition }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+    </div>
+
+    <!-- Footer -->
+    <div class="container">
+        <footer class="py-3 my-4">
+            <ul class="nav justify-content-center border-bottom pb-3 mb-3">
+                <li class="nav-item"><a href="/detail/test" class="nav-link px-2 text-body-secondary">Detail</a></li>
+            </ul>
+            <p class="text-center text-body-secondary">© 2023 Xander, Inc</p>
+        </footer>
+    </div>
+
+    <!-- Bootstrap CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
